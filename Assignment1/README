@@ -1,0 +1,37 @@
+CS511 Assignment 1 Report
+
+Name: Lian Yu
+Email: lyu7@stevens.edu
+
+In my program, I assume that the longest input word does not include more than 100 letters, and the word frequency is not more than 20 digit.
+
+Experiment
+
+I ran the program five times for different size files input and different number of children processes to get average. Here are the time it takes.
+
+File size 16.8KB:
+2 children processes:  0.0072 seconds
+5 children processes:  0.0068 seconds
+10 children processes: 0.0082 seconds
+
+File size 1.5MB:
+2 children processes:  0.498 seconds
+5 children processes:  0.328 seconds
+10 children processes: 0.272 seconds
+
+FIle size 80.6MB:
+2 children processes:  17.848 seconds
+5 children processes:  13.665 seconds
+10 children processes: 13.619 seconds
+
+From the results, we can find out that when the files' size is small, the run time are close. When the files' size are medium, the run time decreased as the number of children processes increased. When the files' size are large, the run time of 5 children processes and 10 children processes are almost the same. 
+
+To get more information, I looked into the CPU utilization. When I ran large file with 2 children processes, the CPUs utilization of 2 processes reached 100%. The result of running large file with 5 children processes, the range of the CPUs utilization of 5 processes are 80%~90%. As running large file with 10 children processes, the range of the CPUs utilization of 10 processes are 30~50%. My computer has 2 real cores, which can run as 4 logical cores. When 2 children processes run, 2 children processes uses all resources of 2 logical cores, thus, the utilization can hit 100%. When 5 children processes run, 4 logical cores run as 5 logical cores to handle with the program, so the utilization of CPUs are 80% to 90%, which multiply by 5 (the number of children processes) are 400% to 450% as the CPUs utilization of 4 true logical cores are 400%. When 10 children processes run, 4 logical cores run as 10 logical cores. The CPUs utilization multiply by 10 are 300% to 500%. I guess that it is the reason why the run time of 5 children processes are close to 10 children processes, because of both of they used all CPUs resources. But 2 children processes just used 2 cores.
+
+When file size are small and medium, the run time of program are short. I can not catch the CPUs utilization. I assume that if file size are small, program did not use all cores' resources, it is possible that one children process has finished the job before other children processes have been created. Thus the run time are close to each other. When the file size are medium, the situation is similar. But the difference is that more children processes can use more core resources.
+
+Analysis
+
+What I did in my assignment is that, first, program read all file and put input words into a big string array. Second, program creates children processes in a loop, every children processes will get a copy of the array. The created children processes start to count the words frequency of their part of array, which can be separated by the loop flag number. Third, children processes sort the counted array which includes word and word frequency and send the results through pipe to parent processes. For detail, the program write one line to the pipe per loop, and I add flag in the end of array to let the parent process know when stop to read data from pipe. After the last child process is created, the parent process start to read the data from pipe. At the same time, every input data will be saved in a merged array. But finally, I found that the merged array did not be completely sorted, even though every array in children processes were sorted and order of pipe command is based on order of word frequency. The reason is that different words frequency in different children are different. At last the program has to resort the whole array again.
+
+I think that some part of program still can be improved. First, the program just read one letter from file once. If it read one line, the performance may be better. Second, to make the program more safe, I make the parent read data from pipe after the last child process be created. If the parent process begin to read data after the first child process start to work, the performance will be better. Third, the results from children processes need to be rematched and resorted. I am trying to implement the way which professor discuss on class, but can not figure out the solution.

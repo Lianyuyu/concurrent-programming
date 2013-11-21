@@ -1,0 +1,59 @@
+CS511 Assignment 2 Report
+
+Name: Lian Yu
+Email: lyu7@stevens.edu
+
+1.
+In my program, I used two semaphores to control the producers and the consumers to write and read records from the pipe. The two semaphores are empty and full. The named empty semaphore represents how many records can be written to the pipe. The number of space in pipe is based on input argument maxinpipe. The named full semaphore represents how many records can be read from the pipe. 
+
+The code in producer:
+
+        /* acquire the empty lock */
+        sem_wait(&empty);
+
+        write(file_pipes[1],recordString,50);
+
+        /* signal full */
+        sem_post(&full);
+
+The code in consumer:
+
+        /* aquire the full lock */
+        sem_wait(&full);
+
+        read(file_pipes[0], recordString, 512);
+
+        /* signal empty */
+        sem_post(&empty);
+
+At the beginning of the program, I set value of the named empty semaphore as maxinpipe and the value of the named full semaphore as 0. Because at the beginning of the program space of the pipe is empty. 
+
+The way to let the consumers to know weather all the records are read is that I let every producer to write one more record "end" to pipe before they exit, when the consumers read "end" from the pipe, the flag_end_counter_consumer_read will plus one. The flag_end_counter_consumer_read is continually checked after all producers and consumers are created. Thus, when the number of the writen "end" records are equal to the number of the read "end" records, the program will cancel all the running consumer threads and exit.
+
+But when I tested the program, the flag_end_counter_consumer_read can not be always counted correctly, especially when the number of created threads are big. It will make the program run into deadlock. So, I assume that the variable++ operation is not atomic. To solve this problem, I added four more semaphores to control the four monitor flags. 
+
+Additionally, The function monitor_all_infor is used to monitor information about the flags and semaphores in program. The monitor_deadlock function is used to force the program cancel all threads when the program run into deadlock. The function cancel_all_threads is used to cancel the two monitor thread and all consumer threads.
+
+2.
+To determine whether the semaphore wakeup implementation is fair, I set flags consumer_read_records for every consumer thread to count how many records are read by the consumer. The records will be printed at the end of the program. At the same time, the consumer threads will write every read record to a local file, which is named as consumer-<consumerID>.
+
+The example out put, when I run ./sempipetest 10000 10 10 10:
+
+All producer and consumer threads are created.
+All producer threads exited.
+flag_end_counter_consumer_read 1000 end, consumers received all 'end' records
+consumer 0 read_records 2011 lines. 
+consumer 1 read_records 2346 lines. 
+consumer 2 read_records 770 lines. 
+consumer 3 read_records 1914 lines. 
+consumer 4 read_records 351 lines. 
+consumer 5 read_records 1843 lines. 
+consumer 6 read_records 339 lines. 
+consumer 7 read_records 356 lines. 
+consumer 8 read_records 577 lines. 
+consumer 9 read_records 493 lines. 
+The number of all consumer_read_records 11000 is equal to (numProd * numRecordPerProd + numProd) 11000 
+All threads are canceled. 
+Exit the program
+
+As the result shows, the semaphore wakeup implementation is unfair. Some consumer threads read more records, even though the consumer thread was created later than the previous one.

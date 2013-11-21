@@ -1,0 +1,32 @@
+Programming Assignment 1
+
+The goal of this assignment is to become familiar with multi-process concurrent
+programming on Unix. You should also be able to select and use appropriate IPC
+techniques for communication and co-ordination between processes.
+You should design a multi-process program to compute the word frequencies from a
+large text file. The output from your program would be tuples of the form <word> <wordcount>
+printed out one per line. The output lines are ordered in decreasing order of word fre-
+quency with most frequent word being printed first.
+Your program should be able to divide the task into smaller sub-tasks. These sub-
+tasks should be assigned to a set of child processes. Your program should co-ordinate
+the actions of processes correctly. It should either complete its task or return a non zero
+exit value - even upon receiving a signal. The program should not result in zombies or
+any other system resource leaks.
+You should choose a suitable co-ordination and communication mechanism to solve
+the problem. You can use standard library functions for primitive tasks like sorting
+within the child process; e.g.: qsort(3) (if required).
+1. Program 8 marks
+Your submission should include C source, README file, and Makefile. It should
+compile on linux-lab to create the executable called wfc with the following
+usage:
+wfc -p <parallelism> [-i <input file>] [-o <output file>]
+2. Experiment 4 marks
+Run the program with different input sizes 10K, 1M, and 100M; and different
+number of child processes: 2, 5, and 10. How much time does it take, and why?
+Explain and report your results.
+3. Analysis 3 marks
+Calculate the expected performance of your algorithm taking into account the
+parallelization technique used. Is it the best possible, and why? Otherwise, what,
+if anything, can be done to improve the performance of wfc?
+This assignment should be submitted by midnight (11.59PM) on October 2, 2012 in
+moodle.

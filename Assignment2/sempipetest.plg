@@ -1,0 +1,27 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: sempipetest - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\YULIAN~1.CN\AppData\Local\Temp\RSPA132.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"Debug/sempipetest.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\sit\third semister\CS511\assignment_2\LIANYU\LIANYU\sempipetest.c"
+]
+Creating command line "cl.exe @C:\Users\YULIAN~1.CN\AppData\Local\Temp\RSPA132.tmp" 
+<h3>Output Window</h3>
+Compiling...
+sempipetest.c
+d:\sit\third semister\cs511\assignment_2\lianyu\lianyu\sempipetest.c(3) : fatal error C1083: Cannot open include file: 'pthread.h': No such file or directory
+Error executing cl.exe.
+
+
+
+<h3>Results</h3>
+sempipetest.obj - 1 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

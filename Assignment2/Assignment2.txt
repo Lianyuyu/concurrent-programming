@@ -1,0 +1,61 @@
+Concurrent Programming CS511
+Programming Assignment 2
+October 15, 2012
+Semaphores are provided in Linux for supporting atomic counting operations. The Linux
+implementation has the same semaphore semantics as we have discussed in the class. The
+following functions are used for working with semaphores on Linux :
+ sem_init : Initialize a semaphore for usage
+ sem_destroy : Free the resources associated with the semaphore
+ sem_wait : Decrement the value (blocks if decrement would make count negative)
+ sem_post : Increment the value associated with the semaphore
+You should read the usage for these calls with the man command. A code snippet is also
+attached at the end of this assignment.
+Recall the system call pipe. The file descriptors of pipe can also be used by threads within
+a process to read and write data. In particular, the pipe may be used by producer threads to
+write records into the pipe which can then be consumed by consumers reading from the same
+pipe. Also, recall that posix guarantees that write requests of PIPE BUF bytes or less shall be
+atomic. It is also specified that PIPE BUF is at least 512 bytes
+1
+Write a program that utilizes the atomic write and a counting semaphore to pass records of 512
+bytes from a set of producer threads to a set of consumer threads. The number of producers and
+consumer threads created, the number of records created by each producer, and the maximum
+number of records in pipe should be controllable on the command line as follows:
+sempipetest <numproducers> <numconsumers> <itemsperproducer> <maxinpipe>
+The program should exit gracefully, i.e. the consumers should consume all the records and all
+the resources should be freed before main returns.
+The consumer should use a counting semaphore to read 512 bytes bytes from the pipe only
+if it shall succeed1. Verify this property by reading in non-blocking mode2. 10 marks
+2
+Device a mechanism to use the 512 byte records for identifying the producer and carrying any
+other helpful information. Make the consumers print out the records being read from the pipe.
+Can you determine if the semaphore wakeup implementation is fair? 5 marks
+1This is an example of using counting semaphore for synchronization without using any critical section.
+2Non-blocking I/O is possible by using the fcntl(2) F SETFL operation to enable the O NONBLOCK open
+file status 
+ag on the read descriptor
+1
+Snippet
+The following snippet gives a usage hint about semaphores on Linux. A semaphore can be
+initialized for use by threads of the same process as follows:
+#include <semaphore.h>
+#define INITIAL COUNT 120
+sem t count;
+int main(...)
+f
+int ret = sem init( &count, 0, INITIAL COUNT) ;
+...
+...
+sem destroy(&count);
+g
+void * consume(...)
+f
+sem wait(&count);
+...
+g
+void * produce(...)
+f
+...
+sem post(&count);
+g
+This assignment should be submitted by 11:59PM on October 28, 2012 on moodle.
+2
